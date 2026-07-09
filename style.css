@@ -1,139 +1,187 @@
-/* ==========================================================================
-   VARIÁVEIS DE CORES (Tema Claro Padrão)
-   ========================================================================== */
 :root {
-    --bg-principal: #f4f6f9;
-    --bg-card: #ffffff;
-    --texto-principal: #1a1a1a;
-    --texto-secundario: #555555;
-    --cor-acento: #0d47a1; /* Azul Tatame */
-    --cor-botoes: #e0e0e0;
-    --cor-botoes-hover: #d5d5d5;
-    --borda: #dddddd;
+    /* Cores inspiradas na seleção (Amarelo, Verde e Azul clássico) */
+    --cor-primaria: #006A4E;     /* Verde bandeira clássico */
+    --cor-secundaria: #FDB913;   /* Amarelo canarinho vibrante */
+    --cor-fundo: #f8fafc;
+    --cor-texto: #1e293b;
+    --cor-contraste: #ffffff;
+    --cor-botao: #e2e8f0;
+    --cor-card: #ffffff;
+
+    --fonte-texto: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ==========================================================================
-   MODO ESCURO (.tema-escuro) - Ativado pelo JavaScript
-   ========================================================================== */
-body.tema-escuro {
-    --bg-principal: #121212;
-    --bg-card: #1e1e1e;
-    --texto-principal: #ffffff;
-    --texto-secundario: #b0b0b0;
-    --cor-acento: #ffb300; /* Destaque Ouro/Faixa Preta */
-    --cor-botoes: #333333;
-    --cor-botoes-hover: #444444;
-    --borda: #333333;
-}
-
-/* ==========================================================================
-   ESTILOS GERAIS
-   ========================================================================== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-principal);
-    color: var(--texto-principal);
+* {
+    box-sizing: border-box;
     margin: 0;
-    padding: 20px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 0;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.tema-escuro {
+    --cor-primaria: #FDB913;     /* Amarelo ganha destaque no tema escuro */
+    --cor-secundaria: #00875F;   /* Verde mais brilhante */
+    --cor-fundo: #0b0f19;
+    --cor-texto: #f1f5f9;
+    --cor-contraste: #111827;
+    --cor-botao: #1e293b;
+    --cor-card: #1e293b;
+}
+
+body {
+    max-width: 100vw;
+    font-family: var(--fonte-texto);
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 800px;
-    margin: 0 auto 30px auto;
-    border-bottom: 2px solid var(--cor-acento);
-    padding-bottom: 10px;
+    background-color: #006A4E; /* Mantém o verde forte de fundo */
+    background-image: linear-gradient(135deg, #006A4E 0%, #004D38 100%);
+    color: #ffffff;
+    text-align: center;
+    padding: 40px 20px;
+    border-bottom: 5px solid var(--cor-secundaria);
 }
 
-h1 {
-    margin: 0;
-    text-transform: uppercase;
-    font-style: italic;
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Botão de alternar tema (toggleTheme) */
-#toggleTheme {
-    background: var(--cor-botoes);
-    border: 1px solid var(--borda);
-    font-size: 1.5rem;
-    padding: 8px 12px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-#toggleTheme:hover {
-    background: var(--cor-botoes-hover);
-    transform: scale(1.05);
-}
-
-/* ==========================================================================
-   ARTIGOS SOBRE JIU-JITSU
-   ========================================================================== */
-main {
-    max-width: 800px;
+header p {
+    font-size: 1.1rem;
+    max-width: 600px;
     margin: 0 auto;
+    opacity: 0.9;
+}
+
+.tema-escuro header p {
+    color: #ffffff;
+    font-weight: normal;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
 }
 
 article {
-    background-color: var(--bg-card);
-    border: 1px solid var(--borda);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.3s, border-color 0.3s;
+    background-color: var(--cor-card);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-top: 4px solid var(--cor-primaria);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
 }
 
-article h2 {
-    color: var(--cor-acento);
-    margin-top: 0;
+.tema-escuro article {
+    border-top: 4px solid var(--cor-primaria);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* Substituição das imagens por ícones em formato de emoji escaláveis */
+.emoji-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    user-select: none;
+}
+
+h2 {
+    font-size: 1.4rem;
+    color: var(--cor-primaria);
+    margin-bottom: 8px;
+}
+
+.artigo-autor {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
+.tema-escuro .artigo-autor {
+    color: #94a3b8;
 }
 
 article p {
-    color: var(--texto-secundario);
+    font-size: 1rem;
     line-height: 1.6;
+    margin-bottom: 16px;
+    color: var(--cor-texto);
 }
 
-/* Container de Reações (Botões de Like e Up) */
-.reacoes {
-    display: flex;
-    gap: 15px;
-    margin-top: 15px;
-    border-top: 1px solid var(--borda);
-    padding-top: 15px;
+.artigo-fonte {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
 }
 
-.btn-like, .btn-up {
-    background-color: var(--cor-botoes);
-    color: var(--texto-principal);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
+.artigo-fonte a {
+    color: #0284c7;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.artigo-fonte a:hover {
+    text-decoration: underline;
+}
+
+.tema-escuro .artigo-fonte a {
+    color: #38bdf8;
+}
+
+/* Botões de interatividade */
+button {
     cursor: pointer;
-    font-weight: bold;
+    border: none;
+    background-color: var(--cor-botao);
+    color: var(--cor-texto);
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 20px;
+    margin: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.btn-tema-escuro {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    font-size: 28px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s, transform 0.1s;
+    justify-content: center;
+    background-color: var(--cor-primaria);
+    color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    z-index: 100;
 }
 
-.btn-like:hover, .btn-up:hover {
-    background-color: var(--cor-botoes-hover);
-    transform: translateY(-2px);
-}
-
-.btn-like:active, .btn-up:active {
-    transform: translateY(0);
-}
-
-/* Customização dos números dentro do span */
-.reacoes span {
-    background-color: var(--bg-principal);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.9rem;
+.tema-escuro .btn-tema-escuro {
+    background-color: var(--cor-primaria);
+    color: #111827;
 }
