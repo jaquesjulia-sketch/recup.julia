@@ -1,139 +1,90 @@
-/* ==========================================================================
-   VARIÁVEIS DE CORES (Tema Claro Padrão)
-   ========================================================================== */
-:root {
-    --bg-principal: #f4f6f9;
-    --bg-card: #ffffff;
-    --texto-principal: #1a1a1a;
-    --texto-secundario: #555555;
-    --cor-acento: #0d47a1; /* Azul Tatame */
-    --cor-botoes: #e0e0e0;
-    --cor-botoes-hover: #d5d5d5;
-    --borda: #dddddd;
-}
-
-/* ==========================================================================
-   MODO ESCURO (.tema-escuro) - Ativado pelo JavaScript
-   ========================================================================== */
-body.tema-escuro {
-    --bg-principal: #121212;
-    --bg-card: #1e1e1e;
-    --texto-principal: #ffffff;
-    --texto-secundario: #b0b0b0;
-    --cor-acento: #ffb300; /* Destaque Ouro/Faixa Preta */
-    --cor-botoes: #333333;
-    --cor-botoes-hover: #444444;
-    --borda: #333333;
-}
-
-/* ==========================================================================
-   ESTILOS GERAIS
-   ========================================================================== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-principal);
-    color: var(--texto-principal);
-    margin: 0;
-    padding: 20px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-header {
+/* ==========================================
+   5. Estilização do Filtro de Faixas
+   ========================================== */
+.container-filtro {
+    max-width: 1200px;
+    margin: 20px auto 0 auto;
+    padding: 0 24px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    max-width: 800px;
-    margin: 0 auto 30px auto;
-    border-bottom: 2px solid var(--cor-acento);
-    padding-bottom: 10px;
+    justify-content: flex-start;
+    gap: 12px;
 }
 
-h1 {
-    margin: 0;
-    text-transform: uppercase;
-    font-style: italic;
+.container-filtro label {
+    font-weight: 600;
+    font-family: var(--fonte-texto);
+    color: var(--cor-texto);
 }
 
-/* Botão de alternar tema (toggleTheme) */
-#toggleTheme {
-    background: var(--cor-botoes);
-    border: 1px solid var(--borda);
-    font-size: 1.5rem;
-    padding: 8px 12px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-#toggleTheme:hover {
-    background: var(--cor-botoes-hover);
-    transform: scale(1.05);
-}
-
-/* ==========================================================================
-   ARTIGOS SOBRE JIU-JITSU
-   ========================================================================== */
-main {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-article {
-    background-color: var(--bg-card);
-    border: 1px solid var(--borda);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-article h2 {
-    color: var(--cor-acento);
-    margin-top: 0;
-}
-
-article p {
-    color: var(--texto-secundario);
-    line-height: 1.6;
-}
-
-/* Container de Reações (Botões de Like e Up) */
-.reacoes {
-    display: flex;
-    gap: 15px;
-    margin-top: 15px;
-    border-top: 1px solid var(--borda);
-    padding-top: 15px;
-}
-
-.btn-like, .btn-up {
-    background-color: var(--cor-botoes);
-    color: var(--texto-principal);
-    border: none;
+#filtro-faixa {
     padding: 8px 16px;
-    border-radius: 20px;
+    border-radius: 8px;
+    border: 2px solid var(--cor-primaria);
+    background-color: var(--cor-card);
+    color: var(--cor-texto);
+    font-family: var(--fonte-texto);
+    font-weight: 600;
     cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#filtro-faixa:focus {
+    border-color: var(--cor-secundaria);
+}
+
+/* ==========================================
+   6. Estilização do Cronômetro de Treino (Rolas)
+   ========================================== */
+.container-timer {
+    background-color: var(--cor-card);
+    border: 3px solid var(--cor-primaria);
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 400px;
+    margin: 30px auto;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tema-escuro .container-timer {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.container-timer h3 {
+    font-size: 1.2rem;
+    color: var(--cor-primaria);
+    margin-bottom: 12px;
+    font-family: var(--fonte-texto);
+}
+
+#timer-display {
+    font-size: 3.5rem;
     font-weight: bold;
+    font-family: monospace; /* Fonte fixa para os números não "sambar" */
+    color: var(--cor-texto);
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+}
+
+.timer-controles {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s, transform 0.1s;
+    justify-content: center;
+    gap: 12px;
 }
 
-.btn-like:hover, .btn-up:hover {
-    background-color: var(--cor-botoes-hover);
-    transform: translateY(-2px);
+/* Customização dos botões do timer herdando o estilo base */
+#btn-start-timer {
+    background-color: #22c55e; /* Verde padrão de sucesso/play */
+    color: #ffffff;
 }
 
-.btn-like:active, .btn-up:active {
-    transform: translateY(0);
+#btn-pause-timer {
+    background-color: #ef4444; /* Vermelho padrão de parada/pause */
+    color: #ffffff;
 }
 
-/* Customização dos números dentro do span */
-.reacoes span {
-    background-color: var(--bg-principal);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.9rem;
+#btn-start-timer:hover, #btn-pause-timer:hover {
+    opacity: 0.9;
 }
