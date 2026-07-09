@@ -1,1 +1,836 @@
+import React, { useState } from 'react';
+import { 
+  Award, 
+  BookOpen, 
+  Calculator, 
+  ChevronRight, 
+  Clock, 
+  Flame, 
+  HelpCircle, 
+  Info, 
+  Plus, 
+  RotateCcw, 
+  Search, 
+  Shield, 
+  Sparkles, 
+  Trash2, 
+  TrendingUp, 
+  Trophy, 
+  User 
+} from 'lucide-react';
 
+export default function App() {
+  // Estado para Navegação das Abas Principais
+  const [activeTab, setActiveTab] = useState('faixas');
+
+  // Estado da Faixa Selecionada
+  const [selectedBelt, setSelectedBelt] = useState('branca');
+
+  // Estado de Busca no Dicionário de Golpes
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterOrigem, setFilterOrigem] = useState('todos');
+
+  // Estados para a Calculadora de Pontos de Luta
+  const [fighterAPoints, setFighterAPoints] = useState(0);
+  const [fighterBPoints, setFighterBPoints] = useState(0);
+  const [matchHistory, setMatchHistory] = useState([]);
+
+  // Estados para o Diário de Treinos
+  const [trainings, setTrainings] = useState([
+    { id: 1, data: '2026-07-08', tipo: 'Treino Técnico', duracao: '90 min', foco: 'Passagem de guarda e raspagem de tesoura', humor: 'Excelente' },
+    { id: 2, data: '2026-07-06', tipo: 'Sparring (Rola)', duracao: '60 min', foco: 'Defesa de costas e finalização no mata-leão', humor: 'Cansado mas feliz' }
+  ]);
+  const [newDate, setNewDate] = useState(new Date().toISOString().split('T')[0]);
+  const [newType, setNewType] = useState('Treino Técnico');
+  const [newDuration, setNewDuration] = useState('60 min');
+  const [newFocus, setNewFocus] = useState('');
+  const [newHumor, setNewHumor] = useState('Excelente');
+
+  // Dados do Sistema de Faixas
+  const beltsData = {
+    branca: {
+      nome: "Faixa Branca",
+      subtitulo: "O Início e a Sobrevivência",
+      corHex: "#FFFFFF",
+      corTexto: "text-gray-800",
+      bgHex: "bg-slate-100 border-slate-300",
+      barraCor: "bg-slate-400",
+      tempo: "Início da Jornada",
+      foco: "Aprender a respirar sob pressão extrema, defender os primeiros golpes e entender as posições básicas de controle (guarda, montada, cem quilos). É a fase de construir a casca física e a resiliência mental necessária.",
+      dica: "Não tente finalizar todo mundo. Foque em não ser finalizado e em aprender a escapar de posições ruins de forma técnica."
+    },
+    azul: {
+      nome: "Faixa Azul",
+      subtitulo: "A Técnica e a Ofensiva",
+      corHex: "#2563EB",
+      corTexto: "text-blue-600",
+      bgHex: "bg-blue-50 border-blue-200",
+      barraCor: "bg-blue-600",
+      tempo: "Média de 2 anos de permanência",
+      foco: "O praticante começa a atacar de verdade. O foco principal muda para conseguir sair de posições desfavoráveis com fluidez (escapes consistentes) e começar a dominar e catalogar as raspagens básicas.",
+      dica: "Evite a 'síndrome da faixa azul' (parar de treinar). Esta é a fase em que seu repertório técnico realmente começa a se expandir."
+    },
+    roxa: {
+      nome: "Faixa Roxa",
+      subtitulo: "A Fluidez e o Desenvolvimento do Jogo",
+      corHex: "#7C3AED",
+      corTexto: "text-purple-600",
+      bgHex: "bg-purple-50 border-purple-200",
+      barraCor: "bg-purple-600",
+      tempo: "Média de 2 anos de permanência",
+      foco: "O Jiu-Jitsu começa a parecer natural e automático. O atleta combina ataques, defesas e transições com enorme facilidade. É amplamente conhecida na comunidade como a faixa do 'refinamento técnico'.",
+      dica: "Comece a desenvolver o seu 'jogo próprio' (um conjunto de posições em que você é excelente e se sente confortável)."
+    },
+    marrom: {
+      nome: "Faixa Marrom",
+      subtitulo: "A Lapidação e os Ajustes Finos",
+      corHex: "#78350F",
+      corTexto: "text-amber-800",
+      bgHex: "bg-amber-50 border-amber-200",
+      barraCor: "bg-amber-800",
+      tempo: "Média de 1 a 2 anos",
+      foco: "A antessala da tão sonhada faixa preta. O praticante já tem um estilo de jogo consolidado e foca em ajustar detalhes milimétricos, corrigir falhas na defesa sob pressão e aumentar drasticamente a velocidade de reação.",
+      dica: "Pense como um professor. Tente entender a teoria por trás de cada movimento e ajude os menos graduados a evoluírem."
+    },
+    preta: {
+      nome: "Faixa Preta",
+      subtitulo: "O Recomeço e a Maestria",
+      corHex: "#111827",
+      corTexto: "text-neutral-900",
+      bgHex: "bg-zinc-900 border-zinc-800 text-white",
+      barraCor: "bg-red-600",
+      tempo: "Uma vida inteira de dedicação",
+      foco: "Significa que você domina com excelência todos os fundamentos básicos e intermediários do esporte. A partir daqui, a jornada se torna uma busca contínua por aprofundar seu próprio estilo e passar o bastão adiante.",
+      dica: "A faixa preta é apenas uma faixa branca que nunca desistiu. Continue com a mente aberta para aprender todos os dias."
+    }
+  };
+
+  // Dados do Dicionário de Golpes
+  const submissionsData = [
+    {
+      nome: "Mata-Leão",
+      nomeIngles: "Rear Naked Choke",
+      origem: "Pegada de Costas",
+      tipo: "Estrangulamento",
+      mecanica: "O usuário envolve o pescoço do oponente com um braço (passando pelo gogó), fechando um cadeado com as próprias mãos atrás da nuca do adversário e aplicando forte pressão nas artérias carótidas com o bíceps e o antebraço.",
+      dificuldade: "Fácil"
+    },
+    {
+      nome: "Armlock",
+      nomeIngles: "Armbar",
+      origem: "Guarda Fechada ou Montada",
+      tipo: "Chave de Articulação",
+      mecanica: "O praticante isola o braço do oponente entre suas próprias pernas, apoia o pulso dele firmemente contra o próprio peito (polegar apontado para cima) e eleva o quadril para criar uma poderosa alavanca na articulação do cotovelo.",
+      dificuldade: "Média"
+    },
+    {
+      nome: "Raspagem de Tesoura",
+      nomeIngles: "Scissor Sweep",
+      origem: "Guarda Fechada",
+      tipo: "Raspagem / Inversão",
+      mecanica: "Com pegadas firmes na gola e na manga, o praticante abre a guarda, posiciona uma canela cruzando diagonalmente a barriga do oponente e usa a outra perna colada ao tatame para 'cortar' a base do rival como uma tesoura, invertendo a posição.",
+      dificuldade: "Fácil"
+    },
+    {
+      nome: "Triângulo",
+      nomeIngles: "Triangle Choke",
+      origem: "Guarda Aberta ou Fechada",
+      tipo: "Estrangulamento",
+      mecanica: "O lutador isola um braço e a cabeça do adversário entre as suas próprias pernas, travando o joelho sobre o tornozelo oposto para criar uma figura de triângulo, pressionando a carótida do oponente com o próprio ombro deste.",
+      dificuldade: "Difícil"
+    },
+    {
+      nome: "Kimura",
+      nomeIngles: "Kimura Lock",
+      origem: "Meia Guarda ou Guarda Aberta",
+      tipo: "Chave de Ombro",
+      mecanica: "Segurando o pulso do oponente com uma mão, o lutador passa o outro braço por cima do braço do adversário, segurando o próprio pulso para formar uma pegada em quatro (4), rotacionando o braço do oponente para trás das costas.",
+      dificuldade: "Média"
+    },
+    {
+      nome: "Guilhotina",
+      nomeIngles: "Guillotine Choke",
+      origem: "Guarda Fechada ou em Pé",
+      tipo: "Estrangulamento",
+      mecanica: "Envolve-se a cabeça do oponente sob a axila quando ele tenta uma queda ou projeta o tronco para frente. Une-se as mãos ao redor do pescoço, aplicando pressão para cima com a lateral do rádio.",
+      dificuldade: "Fácil"
+    }
+  ];
+
+  // Dados da Tabela de Pontos
+  const pointsRules = [
+    { pontos: 2, acao: "Queda (Take down)", descricao: "Trazer o oponente do alto para o chão e mantê-lo lá de forma controlada por 3 segundos.", icone: "🤼‍♂️" },
+    { pontos: 2, acao: "Raspagem (Sweep)", descricao: "Estar por baixo na guarda (qualquer variação), inverter a posição de luta e ir para cima.", icone: "🔄" },
+    { pontos: 2, acao: "Joelho na Barriga", descricao: "Estar por cima e posicionar o joelho no abdômen do rival, mantendo a outra perna esticada.", icone: "🦵" },
+    { pontos: 3, acao: "Passagem de Guarda", descricao: "Superar as pernas do oponente que está de guarda e conseguir o controle lateral (cem quilos).", icone: "🛡️" },
+    { pontos: 4, acao: "Montada (Mount)", descricao: "Sentar sobre o tronco/barriga do oponente que está de costas no chão, com os joelhos no solo.", icone: "🥋" },
+    { pontos: 4, acao: "Pegada de Costas", descricao: "Dominar o oponente por trás e colocar os dois calcanhares na parte interna da coxa dele (ganchos).", icone: "🎒" }
+  ];
+
+  // Função para adicionar pontos aos lutadores na simulação de combate
+  const addPoints = (fighter, points, actionName) => {
+    if (fighter === 'A') {
+      setFighterAPoints(prev => prev + points);
+    } else {
+      setFighterBPoints(prev => prev + points);
+    }
+    setMatchHistory(prev => [
+      {
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        lutador: fighter === 'A' ? 'Atleta Azul' : 'Atleta Branco',
+        acao: actionName,
+        pontos: points
+      },
+      ...prev
+    ]);
+  };
+
+  // Resetar simulação de combate
+  const resetMatch = () => {
+    setFighterAPoints(0);
+    setFighterBPoints(0);
+    setMatchHistory([]);
+  };
+
+  // Cadastrar novo treino no diário
+  const handleAddTraining = (e) => {
+    e.preventDefault();
+    if (!newFocus.trim()) return;
+    const newRecord = {
+      id: Date.now(),
+      data: newDate,
+      tipo: newType,
+      duracao: newDuration,
+      foco: newFocus,
+      humor: newHumor
+    };
+    setTrainings([newRecord, ...trainings]);
+    setNewFocus('');
+  };
+
+  // Deletar um treino do diário
+  const handleDeleteTraining = (id) => {
+    setTrainings(trainings.filter(t => t.id !== id));
+  };
+
+  // Filtro de Golpes
+  const filteredSubmissions = submissionsData.filter(sub => {
+    const matchesSearch = sub.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          sub.nomeIngles.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          sub.origem.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesOrigem = filterOrigem === 'todos' || sub.origem.includes(filterOrigem);
+    return matchesSearch && matchesOrigem;
+  });
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-red-500 selection:text-white">
+      {/* Header Principal */}
+      <header className="border-b border-slate-800 bg-slate-950 sticky top-0 z-50 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center font-bold text-xl text-white tracking-wider shadow-lg shadow-red-600/30">
+              BJJ
+            </div>
+            <div>
+              <h1 className="text-xl font-black uppercase tracking-wide text-white flex items-center gap-2">
+                OSS Academy <span className="text-xs bg-red-600/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/30">Pro</span>
+              </h1>
+              <p className="text-xs text-slate-400">Guia Técnico e Progressão de Jiu-Jitsu</p>
+            </div>
+          </div>
+          
+          {/* Navegação Rápida */}
+          <nav className="flex gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+            <button 
+              onClick={() => setActiveTab('faixas')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${activeTab === 'faixas' ? 'bg-red-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            >
+              <Award className="w-4 h-4" />
+              <span className="hidden md:inline">Jornada das</span> Faixas
+            </button>
+            <button 
+              onClick={() => setActiveTab('dicionario')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${activeTab === 'dicionario' ? 'bg-red-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            >
+              <BookOpen className="w-4 h-4" />
+              Dicionário de Golpes
+            </button>
+            <button 
+              onClick={() => setActiveTab('regras')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${activeTab === 'regras' ? 'bg-red-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            >
+              <Calculator className="w-4 h-4" />
+              Tabela & Pontos
+            </button>
+            <button 
+              onClick={() => setActiveTab('diario')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${activeTab === 'diario' ? 'bg-red-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Diário de Treinos
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      {/* Banner de Boas Vindas */}
+      <section className="bg-gradient-to-r from-red-950 via-slate-950 to-indigo-950 py-10 border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <div className="flex items-center gap-2 text-red-500 text-sm font-bold uppercase tracking-wider mb-2">
+                <Flame className="w-4 h-4 animate-pulse" />
+                <span>Arte Suave • O Estilo de Vida</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                Domine os Fundamentos, Construa sua Faixa Preta
+              </h2>
+              <p className="text-slate-300 mt-2 max-w-2xl text-sm md:text-base">
+                O aplicativo definitivo para consulta de golpes rápidos, regras de competição atualizadas, planejamento de graduação e acompanhamento diário de evolução técnica.
+              </p>
+            </div>
+            <div className="flex gap-3 bg-slate-900/80 p-4 rounded-xl border border-slate-800/80 backdrop-blur-sm self-stretch md:self-center">
+              <div className="flex flex-col justify-center">
+                <span className="text-xs text-slate-400">Próxima Meta</span>
+                <span className="text-base font-bold text-white flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-500" /> Lapidação de Defesa
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Conteúdo Principal */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        
+        {/* ABA 1: JORNADA DAS FAIXAS */}
+        {activeTab === 'faixas' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="text-center max-w-xl mx-auto">
+              <span className="text-red-500 font-bold uppercase tracking-wider text-xs">Caminho da Evolução</span>
+              <h3 className="text-2xl font-bold text-white mt-1">O Sistema de Faixas do Jiu-Jitsu</h3>
+              <p className="text-sm text-slate-400 mt-2">
+                A graduação no Jiu-Jitsu é baseada em esforço, tempo e competência real no tatame. Conheça as fases e o foco técnico recomendado para cada estágio.
+              </p>
+            </div>
+
+            {/* Linha do Tempo de Faixas Visual */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {Object.keys(beltsData).map((beltKey) => {
+                const belt = beltsData[beltKey];
+                const isSelected = selectedBelt === beltKey;
+                return (
+                  <button
+                    key={beltKey}
+                    onClick={() => setSelectedBelt(beltKey)}
+                    className={`relative p-4 rounded-xl border-2 transition-all duration-300 flex flex-col justify-between text-left h-36 ${
+                      isSelected 
+                      ? 'border-red-500 bg-slate-800 shadow-xl shadow-red-500/10 scale-102' 
+                      : 'border-slate-800 bg-slate-950/40 hover:border-slate-700 hover:bg-slate-900/60'
+                    }`}
+                  >
+                    <div>
+                      {/* Faixa Visualizada de Cor */}
+                      <div className="flex h-5 w-full rounded border border-slate-700 overflow-hidden mb-3">
+                        <div className="h-full w-4/5" style={{ backgroundColor: belt.corHex }}></div>
+                        <div className="h-full w-1/5 bg-black"></div>
+                      </div>
+                      <h4 className="font-bold text-base text-white">{belt.nome}</h4>
+                    </div>
+                    <span className="text-xs text-slate-400 truncate flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {beltKey === 'branca' ? 'Início' : '2 Anos'}
+                    </span>
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Detalhe da Faixa Selecionada */}
+            <div className={`p-6 md:p-8 rounded-2xl border ${beltsData[selectedBelt].bgHex} transition-all duration-500 shadow-xl`}>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-slate-800/20">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                      selectedBelt === 'preta' ? 'bg-red-600 text-white' : 'bg-slate-900 text-white border border-slate-800'
+                    }`}>
+                      {beltsData[selectedBelt].nome}
+                    </span>
+                    <span className="text-sm font-semibold text-slate-500 flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-slate-400" /> {beltsData[selectedBelt].tempo}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-2 flex items-center gap-2">
+                    {beltsData[selectedBelt].subtitulo}
+                  </h3>
+                </div>
+
+                {/* Exibição Gráfica da Faixa */}
+                <div className="w-48 h-8 rounded-lg border-2 border-black overflow-hidden flex shadow-lg">
+                  <div className="h-full w-4/5 shadow-inner" style={{ backgroundColor: beltsData[selectedBelt].corHex }}></div>
+                  <div className="h-full w-1/5 bg-zinc-950 flex justify-center items-center">
+                    <div className="w-0.5 h-full bg-white mx-0.5"></div>
+                    <div className="w-0.5 h-full bg-white mx-0.5"></div>
+                    <div className="w-0.5 h-full bg-white mx-0.5"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Informações da Faixa */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-800">
+                <div className="bg-white/85 p-5 rounded-xl shadow-sm border border-slate-100">
+                  <h4 className="font-extrabold text-slate-900 text-lg flex items-center gap-2 mb-3">
+                    <Shield className="w-5 h-5 text-red-600" /> Foco Técnico e Sobrevivência
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed text-sm md:text-base">
+                    {beltsData[selectedBelt].foco}
+                  </p>
+                </div>
+                
+                <div className="bg-slate-900 text-slate-100 p-5 rounded-xl shadow-md border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-bold text-white text-lg flex items-center gap-2 mb-3">
+                      <Sparkles className="w-5 h-5 text-amber-500" /> Conselho do Mestre (Dica do App)
+                    </h4>
+                    <p className="text-slate-300 italic text-sm md:text-base leading-relaxed">
+                      "{beltsData[selectedBelt].dica}"
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400 flex items-center gap-2">
+                    <Info className="w-4 h-4 text-red-500" /> O tempo de permanência pode variar de acordo com o desempenho e frequência.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Card Explicativo de Desenvolvimento */}
+            <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+              <div className="space-y-1 text-center md:text-left">
+                <h4 className="font-bold text-white flex items-center justify-center md:justify-start gap-2">
+                  <Trophy className="w-5 h-5 text-amber-500" /> Como Funciona a Graduação no Aplicativo?
+                </h4>
+                <p className="text-sm text-slate-400">
+                  Ao usar o aplicativo de Jiu-Jitsu, você pode marcar aulas completadas e registrar cada sparring no diário para receber alertas de quando estiver pronto para os testes teóricos e de graduação.
+                </p>
+              </div>
+              <button 
+                onClick={() => setActiveTab('diario')}
+                className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg flex items-center gap-2 transition-all shrink-0 shadow-lg shadow-red-600/25"
+              >
+                Ver Meu Diário de Treinos <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ABA 2: DICIONÁRIO DE GOLPES */}
+        {activeTab === 'dicionario' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="text-red-500 font-bold uppercase tracking-wider text-xs">Enciclopédia Prática</span>
+                <h3 className="text-2xl font-bold text-white">Dicionário de Finalizações & Posições</h3>
+                <p className="text-sm text-slate-400 mt-1">Busque rapidamente pela mecânica de funcionamento de cada golpe do esporte.</p>
+              </div>
+
+              {/* Filtro de Busca */}
+              <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <div className="relative flex-grow">
+                  <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Buscar golpe, origem, nome..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full sm:w-64 pl-9 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-red-500 transition-colors"
+                  />
+                </div>
+                <select
+                  value={filterOrigem}
+                  onChange={(e) => setFilterOrigem(e.target.value)}
+                  className="bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 px-3 py-2.5 focus:outline-none focus:border-red-500"
+                >
+                  <option value="todos">Todas as Posições</option>
+                  <option value="Costas">Pegada de Costas</option>
+                  <option value="Guarda Fechada">Guarda Fechada</option>
+                  <option value="Meia Guarda">Meia Guarda</option>
+                  <option value="Montada">Montada</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Listagem de Golpes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredSubmissions.length > 0 ? (
+                filteredSubmissions.map((sub, index) => (
+                  <div key={index} className="bg-slate-950/60 rounded-xl border border-slate-800/80 p-5 flex flex-col justify-between hover:border-slate-700 transition-all hover:shadow-xl group">
+                    <div>
+                      <div className="flex justify-between items-start mb-3">
+                        <span className="text-xs bg-red-600/10 border border-red-500/20 text-red-400 font-semibold px-2 py-1 rounded">
+                          {sub.tipo}
+                        </span>
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${
+                          sub.dificuldade === 'Fácil' ? 'bg-green-500/10 text-green-400' :
+                          sub.dificuldade === 'Média' ? 'bg-yellow-500/10 text-yellow-400' :
+                          'bg-red-500/10 text-red-400'
+                        }`}>
+                          Nível: {sub.dificuldade}
+                        </span>
+                      </div>
+
+                      <h4 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors">
+                        {sub.nome}
+                      </h4>
+                      <p className="text-xs text-slate-400 italic mb-4">
+                        Inglês: {sub.nomeIngles}
+                      </p>
+
+                      <div className="bg-slate-900/80 p-3 rounded-lg border border-slate-800/50 mb-4">
+                        <span className="text-xxs uppercase font-bold tracking-wider text-slate-500 block mb-1">Posição de Origem:</span>
+                        <span className="text-xs font-semibold text-slate-300">{sub.origem}</span>
+                      </div>
+
+                      <p className="text-slate-400 text-xs md:text-sm leading-relaxed mb-4">
+                        <strong className="text-slate-300 block mb-1">Como Funciona:</strong>
+                        {sub.mecanica}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-900 flex justify-between items-center text-xs text-slate-500">
+                      <span>OSS Academy</span>
+                      <button className="text-red-500 hover:text-red-400 font-bold flex items-center gap-1 transition-colors">
+                        Ver Vídeo <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 bg-slate-950/40 border border-slate-800 rounded-xl">
+                  <p className="text-slate-400">Nenhum golpe encontrado para a sua pesquisa.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ABA 3: REGRAS & CALCULADORA DE PONTOS */}
+        {activeTab === 'regras' && (
+          <div className="space-y-8 animate-fadeIn">
+            {/* Header Regras */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="text-red-500 font-bold uppercase tracking-wider text-xs">Campeonatos & Arbitragem</span>
+                <h3 className="text-2xl font-bold text-white">Regras Oficiais e Tabela de Pontos</h3>
+                <p className="text-sm text-slate-400 mt-1">Conheça os pontos atribuídos a cada ação de dominância clássica no tatame.</p>
+              </div>
+              <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 p-3 rounded-lg max-w-md">
+                <Info className="w-5 h-5 shrink-0" />
+                <p className="text-xs">
+                  <strong>Regra de Ouro:</strong> Os pontos só são computados se você mantiver a dominância por pelo menos <strong>3 segundos consecutivos</strong>.
+                </p>
+              </div>
+            </div>
+
+            {/* Layout Dividido: Tabela Oficial de Pontos & Painel Simulador de Lutas */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              {/* Tabela de Referência */}
+              <div className="bg-slate-950/50 p-6 rounded-xl border border-slate-800">
+                <h4 className="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-red-500" /> Tabela de Pontuações de Luta
+                </h4>
+                <div className="space-y-4">
+                  {pointsRules.map((rule, idx) => (
+                    <div key={idx} className="bg-slate-900 hover:bg-slate-850 p-4 rounded-xl border border-slate-800/80 flex items-center justify-between gap-4 transition-all">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-slate-800 text-lg rounded-full flex items-center justify-center border border-slate-750">
+                          {rule.icone}
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-sm text-white">{rule.acao}</h5>
+                          <p className="text-xs text-slate-400 mt-0.5">{rule.descricao}</p>
+                        </div>
+                      </div>
+                      <div className="bg-red-600/20 border border-red-500/30 px-3 py-1.5 rounded-lg text-center min-w-[64px]">
+                        <span className="text-red-400 font-extrabold text-sm block">+{rule.pontos}</span>
+                        <span className="text-[9px] text-red-300 font-bold uppercase tracking-wider">Pontos</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Simulador de Lutas */}
+              <div className="bg-slate-950/50 p-6 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-center mb-6">
+                    <h4 className="font-bold text-lg text-white flex items-center gap-2">
+                      <Calculator className="w-5 h-5 text-blue-500" /> Simulador de Placar Real-Time
+                    </h4>
+                    <button 
+                      onClick={resetMatch}
+                      className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-xs font-semibold text-slate-300 rounded-lg flex items-center gap-1.5 transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" /> Limpar
+                    </button>
+                  </div>
+
+                  {/* Placar Principal */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {/* Atleta A (Azul) */}
+                    <div className="bg-blue-950/40 border border-blue-900/60 p-5 rounded-xl text-center relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
+                      <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Atleta Azul</span>
+                      <div className="text-5xl font-black text-white my-3 tracking-tighter">
+                        {fighterAPoints} <span className="text-xs text-slate-400">pts</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1">
+                        {pointsRules.map((r, i) => (
+                          <button
+                            key={i}
+                            onClick={() => addPoints('A', r.pontos, r.acao)}
+                            className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 text-xxs font-bold p-1.5 rounded border border-blue-500/10 transition-colors"
+                          >
+                            +{r.pontos}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Atleta B (Branco) */}
+                    <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl text-center relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-slate-300"></div>
+                      <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Atleta Branco</span>
+                      <div className="text-5xl font-black text-white my-3 tracking-tighter">
+                        {fighterBPoints} <span className="text-xs text-slate-400">pts</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1">
+                        {pointsRules.map((r, i) => (
+                          <button
+                            key={i}
+                            onClick={() => addPoints('B', r.pontos, r.acao)}
+                            className="bg-slate-700/30 hover:bg-slate-700/50 text-slate-300 text-xxs font-bold p-1.5 rounded border border-slate-600/20 transition-colors"
+                          >
+                            +{r.pontos}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Histórico Recente de Ações */}
+                  <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-850">
+                    <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+                      <span>Histórico da Luta (Log de Ações)</span>
+                      <span className="text-xxs px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 font-semibold lowercase">estabilidade 3s verificada</span>
+                    </h5>
+                    <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                      {matchHistory.length > 0 ? (
+                        matchHistory.map((item, idx) => (
+                          <div key={idx} className="flex justify-between items-center text-xs bg-slate-950 p-2.5 rounded border border-slate-800">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-slate-500 font-mono">{item.timestamp}</span>
+                              <span className={`font-bold ${item.lutador === 'Atleta Azul' ? 'text-blue-400' : 'text-slate-300'}`}>
+                                {item.lutador}
+                              </span>
+                              <span className="text-slate-400">realizou {item.acao}</span>
+                            </div>
+                            <span className="font-extrabold text-red-500 font-mono">+{item.pontos}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-slate-500 text-center py-4">Clique nos botões de pontuação acima para registrar as ações do combate.</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notas importantes de desempate */}
+                <div className="mt-4 pt-4 border-t border-slate-900 grid grid-cols-2 gap-4 text-xs text-slate-400">
+                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-800">
+                    <strong className="text-slate-300 block mb-0.5">Vantagens:</strong>
+                    Ações quase completadas (quase derrubou, quase finalizou ou quase raspou).
+                  </div>
+                  <div className="bg-slate-900/40 p-2.5 rounded border border-slate-800">
+                    <strong className="text-slate-300 block mb-0.5">Punições:</strong>
+                    Atitude antidesportiva, fugas frequentes de combate ou falta de combatividade.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* ABA 4: DIÁRIO DE TREINOS */}
+        {activeTab === 'diario' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="text-red-500 font-bold uppercase tracking-wider text-xs">Acompanhamento</span>
+                <h3 className="text-2xl font-bold text-white">Diário de Treinos de Jiu-Jitsu</h3>
+                <p className="text-sm text-slate-400 mt-1">Monitore e faça anotações de foco de suas aulas para acelerar a sua evolução técnica.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Formulário de Cadastro de Treino */}
+              <div className="bg-slate-950/60 p-6 rounded-xl border border-slate-800 h-fit">
+                <h4 className="font-bold text-base text-white mb-4 flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-red-500" /> Novo Registro de Treino
+                </h4>
+                
+                <form onSubmit={handleAddTraining} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Data do Treino</label>
+                    <input 
+                      type="date"
+                      value={newDate}
+                      onChange={(e) => setNewDate(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-red-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Tipo de Treino</label>
+                    <select
+                      value={newType}
+                      onChange={(e) => setNewType(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-red-500"
+                    >
+                      <option value="Treino Técnico">Treino Técnico (Aulas regulares)</option>
+                      <option value="Sparring (Rola)">Sparring / Rola livre</option>
+                      <option value="No-Gi / Sem Kimono">No-Gi (Sem Kimono)</option>
+                      <option value="Preparação Física">Preparação Física / Cardio</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Duração</label>
+                      <select
+                        value={newDuration}
+                        onChange={(e) => setNewDuration(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-red-500"
+                      >
+                        <option value="60 min">60 minutos</option>
+                        <option value="90 min">90 minutos</option>
+                        <option value="120 min">120 minutos</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Humor / Energia</label>
+                      <select
+                        value={newHumor}
+                        onChange={(e) => setNewHumor(e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-red-500"
+                      >
+                        <option value="Excelente">Excelente 🔥</option>
+                        <option value="Muito Bom">Muito Bom 💪</option>
+                        <option value="Cansado">Cansado 😴</option>
+                        <option value="Sob Pressão">Sob Pressão 🤯</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Foco do Treino / Observações</label>
+                    <textarea 
+                      placeholder="Ex: Treinei passagem de guarda toureando e aprendi a escapar do braço na montada."
+                      value={newFocus}
+                      onChange={(e) => setNewFocus(e.target.value)}
+                      rows="4"
+                      className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-red-500 placeholder:text-slate-600"
+                      required
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-xs md:text-sm shadow-md transition-colors"
+                  >
+                    Registrar Treino
+                  </button>
+                </form>
+              </div>
+
+              {/* Lista de Treinos Registrados */}
+              <div className="lg:col-span-2 space-y-4">
+                <h4 className="font-bold text-base text-white flex items-center justify-between">
+                  <span>Meus Treinos Anteriores</span>
+                  <span className="text-xs bg-slate-800 border border-slate-750 text-slate-300 px-2 py-1 rounded-full font-semibold">
+                    {trainings.length} treinos
+                  </span>
+                </h4>
+
+                {trainings.length > 0 ? (
+                  trainings.map((t) => (
+                    <div key={t.id} className="bg-slate-950/40 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all flex flex-col sm:flex-row justify-between gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-2.5 py-1 bg-red-600/10 border border-red-500/20 text-red-400 font-bold text-xxs rounded uppercase">
+                            {t.tipo}
+                          </span>
+                          <span className="text-xs text-slate-400 font-medium">
+                            {t.data}
+                          </span>
+                          <span className="text-xs text-slate-500">•</span>
+                          <span className="text-xs text-slate-400 font-semibold">
+                            {t.duracao}
+                          </span>
+                          <span className="text-xs text-slate-500">•</span>
+                          <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px]">
+                            Energia: {t.humor}
+                          </span>
+                        </div>
+                        <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed">
+                          {t.foco}
+                        </p>
+                      </div>
+                      
+                      <button 
+                        onClick={() => handleDeleteTraining(t.id)}
+                        className="text-slate-500 hover:text-red-500 transition-colors p-1 self-start sm:self-center"
+                        title="Deletar registro"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 bg-slate-950/20 border border-slate-800 rounded-xl">
+                    <p className="text-slate-400 text-sm">Você ainda não registrou nenhum treino. Preencha o formulário e salve seu primeiro dia!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* Rodapé */}
+      <footer className="bg-slate-950 border-t border-slate-800 mt-16 py-8">
+        <div className="max-w-7xl mx-auto px-4 text-center space-y-3">
+          <p className="text-xs text-slate-500">
+            OSS Academy App • Todos os direitos reservados.
+          </p>
+          <div className="flex justify-center gap-4 text-xs text-slate-400">
+            <span className="hover:text-white cursor-pointer">Termos de Uso</span>
+            <span>•</span>
+            <span className="hover:text-white cursor-pointer">Privacidade</span>
+            <span>•</span>
+            <span className="hover:text-white cursor-pointer font-bold">OSS! 🥋</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
