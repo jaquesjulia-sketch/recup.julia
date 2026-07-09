@@ -1,11 +1,11 @@
 :root {
-    /* Cores inspiradas na seleção (Amarelo, Verde e Azul clássico) */
-    --cor-primaria: #006A4E;     /* Verde bandeira clássico */
-    --cor-secundaria: #FDB913;   /* Amarelo canarinho vibrante */
-    --cor-fundo: #f8fafc;
-    --cor-texto: #1e293b;
+    /* Cores inspiradas no Jiu-Jitsu (Preto Absoluto e Vermelho Faixa) */
+    --cor-primaria: #cc0000;      /* Vermelho vibrante de competição */
+    --cor-secundaria: #111111;    /* Preto profundo fosco */
+    --cor-fundo: #f4f4f6;
+    --cor-texto: #1a1a1a;
     --cor-contraste: #ffffff;
-    --cor-botao: #e2e8f0;
+    --cor-botao: #e4e4e7;
     --cor-card: #ffffff;
 
     --fonte-texto: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,13 +19,13 @@
 }
 
 .tema-escuro {
-    --cor-primaria: #FDB913;     /* Amarelo ganha destaque no tema escuro */
-    --cor-secundaria: #00875F;   /* Verde mais brilhante */
-    --cor-fundo: #0b0f19;
-    --cor-texto: #f1f5f9;
-    --cor-contraste: #111827;
-    --cor-botao: #1e293b;
-    --cor-card: #1e293b;
+    --cor-primaria: #ff3333;      /* Vermelho mais aceso para contraste */
+    --cor-secundaria: #ffdd00;    /* Detalhe em dourado/amarelo para os títulos */
+    --cor-fundo: #0d0d0d;         /* Fundo preto total de tatame */
+    --cor-texto: #f5f5f5;
+    --cor-contraste: #1a1a1a;
+    --cor-botao: #262626;
+    --cor-card: #171717;          /* Cards grafite escuro */
 }
 
 body {
@@ -36,18 +36,19 @@ body {
 }
 
 header {
-    background-color: #006A4E; /* Mantém o verde forte de fundo */
-    background-image: linear-gradient(135deg, #006A4E 0%, #004D38 100%);
+    background-color: #111111; 
+    background-image: linear-gradient(135deg, #111111 0%, #262626 100%);
     color: #ffffff;
     text-align: center;
     padding: 40px 20px;
-    border-bottom: 5px solid var(--cor-secundaria);
+    border-bottom: 5px solid var(--cor-primaria); /* Linha vermelha de destaque */
 }
 
 header h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
 }
 
 header p {
@@ -74,8 +75,8 @@ main {
 article {
     background-color: var(--cor-card);
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border-top: 4px solid var(--cor-primaria);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    border-top: 4px solid var(--cor-primaria); /* Borda superior vermelha */
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -86,10 +87,10 @@ article {
 
 .tema-escuro article {
     border-top: 4px solid var(--cor-primaria);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
 }
 
-/* Substituição das imagens por ícones em formato de emoji escaláveis */
+/* Ícones em formato de emoji escaláveis */
 .emoji-icon {
     font-size: 48px;
     margin-bottom: 16px;
@@ -100,17 +101,22 @@ h2 {
     font-size: 1.4rem;
     color: var(--cor-primaria);
     margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.tema-escuro h2 {
+    color: #ffffff; /* No tema escuro, o título fica branco para melhor leitura */
 }
 
 .artigo-autor {
     font-size: 0.9rem;
-    color: #64748b;
+    color: #737373;
     margin-bottom: 12px;
     font-style: italic;
 }
 
 .tema-escuro .artigo-autor {
-    color: #94a3b8;
+    color: #a3a3a3;
 }
 
 article p {
@@ -126,7 +132,7 @@ article p {
 }
 
 .artigo-fonte a {
-    color: #0284c7;
+    color: var(--cor-primaria);
     text-decoration: none;
     font-weight: 600;
 }
@@ -136,7 +142,7 @@ article p {
 }
 
 .tema-escuro .artigo-fonte a {
-    color: #38bdf8;
+    color: var(--cor-primaria);
 }
 
 /* Botões de interatividade */
@@ -153,7 +159,7 @@ button {
     align-items: center;
     gap: 6px;
     font-weight: 600;
-    transition: transform 0.1s ease, background-color 0.2s ease;
+    transition: transform 0.1s ease, background-color 0.2s ease, border 0.2s ease;
 }
 
 button:hover {
@@ -164,6 +170,7 @@ button:active {
     transform: scale(0.95);
 }
 
+/* Botão Flutuante de Tema */
 .btn-tema-escuro {
     position: fixed;
     bottom: 24px;
@@ -174,14 +181,3 @@ button:active {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--cor-primaria);
-    color: #ffffff;
-    border-radius: 50%;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-    z-index: 100;
-}
-
-.tema-escuro .btn-tema-escuro {
-    background-color: var(--cor-primaria);
-    color: #111827;
-}
